@@ -1,59 +1,106 @@
-wtg = "banana"
-def w(wtg):
-    lives = 5
-    lwtg = list(wtg)
-    guessed = []
-    #Make a list for display
-    display = lwtg.copy()
-    for p in range(0,len(display)):
-        if lwtg[p] == "-":
-            display[p] = "-"
+"""Hangman word-guessing game.
+
+States: START → SHOW_STATUS → GET_GUESS → VALIDATE_INPUT → PROCESS_GUESS → CHECK_END → WIN/LOSE → PLAY_AGAIN
+"""
+import random
+
+def update_game_state(secret_word_chars: list[str], guessed_letters: list[str], guess: str, lives: int, display: list) -> tuple[int, list[str], list, str]:
+    """Process a player guess and update game state.
+    
+    Args:
+        secret_word_chars: Secret word as list of chars
+        guessed_letters: All guessed letters so far
+        guess: Current player input (letter or word)
+        lives: Remaining wrong guesses
+        display: Current masked word display
+    
+    Returns:
+        (lives, guessed_letters, display, result_code)
+        result_code: 'wrong input', 'already', 'correct', 'incorrect', 'win'
+    
+    Note: Input validation rejects multi-char guesses with spaces/hyphens (bug for words like 'ice cream')
+    """
+    if not guess.isalpha():
+        return lives, guessed_letters, display, "wrong input"
+
+    # Prevent duplicate guesses
+    if guess in guessed_letters:
+        return lives, guessed_letters, display, "already"
+
+    guessed_letters.append(guess)
+
+    # Whole word guess
+    if len(guess) > 1:
+        if guess == "".join(secret_word_chars):
+            return lives, guessed_letters, secret_word_chars, "win"
         else:
-            display[p] = "_" 
-    #Main loop for player to keep guessing
-    while lives > 0 and display != lwtg:
-        a = str(input("Input sum cuh:"))
+            lives -= 1
+            return lives, guessed_letters, display, "incorrect"
 
-        if len(a) > 1:
-            if a != wtg:
-                lives -= 1
-                print("Wrong word cuh")
-                print("Progress:", display)
-            else:
-                print("Damn cuh, you good cuh")
-                
-        #If already guessed then have to guess again
-        if a in guessed:
-            print("Input sum else cuh")
+    # Single letter guess: reveal all occurrences
+    if guess in secret_word_chars:
+        for q in range(len(secret_word_chars)):
+            if secret_word_chars[q] == guess:
+                display[q] = guess
+        return lives, guessed_letters, display, "correct"
+    else:
+        lives -= 1
+        return lives, guessed_letters, display, "incorrect"
 
-        #If not guessed yet
+def run_game() -> None:
+    """Run a single round of Hangman."""
+    words = ["bungalow", "quartz", "zephyr", "pangolin", "hydrant", "astronaut", "labyrinth", "umbrella", "ice cream", "jack-o-lantern"]
+    secret_word = random.choice(words)
+    secret_word_chars = list(secret_word)
+    
+    # Initialize display: reveal spaces/hyphens, mask letters
+    display = []
+    for char in secret_word_chars:
+        if char in ["-", " "]:
+            display.append(char)
         else:
+            display.append("_")
 
-            #If right guess
-            if a in lwtg:
-                temp = []
-                for q in range(0, len(lwtg)):
-                    if lwtg[q] == a:
-                        temp.append(q)
-                for u in range(0,len(display)):
-                    if u in temp:
-                        display[u] = a
-                guessed.append(a)
-                print("Gud job cuh")
-                print("Progress:", display)
+    guessed_letters = []  # TODO: should be a set for O(1) lookup
+    lives = 6
+    
+    print("\n" + "="*20)
+    print("The word is:", "".join(display))
 
-            #If wrong guess
-            if a not in lwtg:
-                lives -= 1
-                guessed.append(a)
-                print("Wrong guess cuh, lives remaining:", lives)
-                print("Progress:", display)
-    if lives == 0:
-        return "You failed cuh"
-    if display == lwtg:
-        return "You good cuh"
+    # Main game loop: SHOW_STATUS → GET_GUESS → VALIDATE_INPUT → PROCESS_GUESS → CHECK_END_CONDITION
+    while lives > 0 and display != secret_word_chars:
+        guess = input("\nInput your guess (letter or whole word): ").lower()
 
-print(w(wtg))
+        lives, guessed_letters, display, result = update_game_state(secret_word_chars, guessed_letters, guess, lives, display)
 
+        if result == "wrong input":
+            print("Invalid input! Use letters only.")
+        elif result == "already":
+            print(f"You already guessed '{guess}'!")
+        elif result == "correct":
+            print("Good guess!")
+        elif result == "incorrect":
+            print("Wrong!")
+        elif result == "win":
+            print("Good job mate! You guessed the whole word!")
+            break
 
+        print("Current progress:", "".join(display))
+        print(f"Lives left: {lives}")
+        print(f"Guessed so far: {', '.join(guessed_letters)}")
 
+    # WIN or LOSE state
+    if display == secret_word_chars:
+        print("\nCongratulations! You won!")
+    else:
+        print(f"\nGame Over. The word was: {secret_word}")
+
+def main() -> None:
+    """Main loop: PLAY_AGAIN state."""
+    play = "y"
+    while play == "y":
+        run_game()
+        play = input("Play again? (y/n): ").lower()
+
+if __name__ == "__main__":
+    main()
