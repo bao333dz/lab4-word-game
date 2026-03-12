@@ -191,3 +191,11 @@ Player can repeatedly spam full guesses without intended penalties/rules.
 
 Terminal end-state still accepts guesses
 After WIN/LOSE, input loop continues modifying game state.
+
+# My notes
+## Coding by myself
+Firstly, I just code the game by myself without the help of anything, manage to did it, everything working fine
+## Asking AI
+Then I ask Gemini to compare my current code of the requirements of the assignment and then I fix what is needed
+## Check the instruction file 1 last time
+Finally I go through the instruction file up and down one last time to make sure I did everything is all good
