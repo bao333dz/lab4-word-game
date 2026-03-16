@@ -4,6 +4,34 @@
 
 ## New Interaction
 
+**Date**: 03-16-2026 11:27
+
+**User**: bao.duong@epita.fr
+
+**Prompt**: Read copilot instructions and activate the journal logger agent
+
+**CoPilot Mode**: Agent
+
+**CoPilot Model**: GPT-5.3-Codex
+
+**Socratic Mode**: ON
+
+**Changes Made**:
+- Read `.github/copilot-instructions.md` and `.github/agents/journal-logger.agent.md` in lab4-word-game
+- Attempted to invoke subagent `journal-logger`; runtime returned "agent not found"
+- Applied fallback by logging this interaction directly into JOURNAL.md using the configured format and git email
+
+**Context and Reasons for Changes**:
+- User requested explicit instruction refresh and journal-logger activation
+- Repository policy requires journaling after Agent/Edit/Plan interactions
+- Direct journal update ensures logging is active even when named subagent registration is unavailable in current runtime
+
+**My Observations**:
+- Journaling policy is configured correctly in repo instructions
+- The local subagent file exists, but this runtime currently exposes only built-in subagents
+
+## New Interaction
+
 **Date**: 03-12-2026 14:30
 
 **User**: bao.duong@epita.fr

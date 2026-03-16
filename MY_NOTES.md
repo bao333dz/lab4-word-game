@@ -199,3 +199,8 @@ Firstly, I just code the game by myself without the help of anything, manage to 
 Then I ask Gemini to compare my current code of the requirements of the assignment and then I fix what is needed
 ## Check the instruction file 1 last time
 Finally I go through the instruction file up and down one last time to make sure I did everything is all good
+
+## Auto play
+I gonna put the option of auto play at the start of each play
+Then if the user type ok, auto play start, it will randomly choose a random word from the alphabet
+Then the chosen word is popped out of the alphabet so that it wont choose itself again

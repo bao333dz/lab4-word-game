@@ -3,6 +3,7 @@
 States: START → SHOW_STATUS → GET_GUESS → VALIDATE_INPUT → PROCESS_GUESS → CHECK_END → WIN/LOSE → PLAY_AGAIN
 """
 import random
+import time
 
 def update_game_state(secret_word_chars: list[str], guessed_letters: list[str], guess: str, lives: int, display: list) -> tuple[int, list[str], list, str]:
     """Process a player guess and update game state.
@@ -66,34 +67,68 @@ def run_game() -> None:
     
     print("\n" + "="*20)
     print("The word is:", "".join(display))
+    auto = input("Do you want to turn on auto play? (ok/no):")
 
-    # Main game loop: SHOW_STATUS → GET_GUESS → VALIDATE_INPUT → PROCESS_GUESS → CHECK_END_CONDITION
-    while lives > 0 and display != secret_word_chars:
-        guess = input("\nInput your guess (letter or whole word): ").lower()
+    if auto == "no":
+        # Main game loop: SHOW_STATUS → GET_GUESS → VALIDATE_INPUT → PROCESS_GUESS → CHECK_END_CONDITION
+        while lives > 0 and display != secret_word_chars:
+            guess = input("\nInput your guess (letter or whole word): ").lower()
 
-        lives, guessed_letters, display, result = update_game_state(secret_word_chars, guessed_letters, guess, lives, display)
+            lives, guessed_letters, display, result = update_game_state(secret_word_chars, guessed_letters, guess, lives, display)
 
-        if result == "wrong input":
-            print("Invalid input! Use letters only.")
-        elif result == "already":
-            print(f"You already guessed '{guess}'!")
-        elif result == "correct":
-            print("Good guess!")
-        elif result == "incorrect":
-            print("Wrong!")
-        elif result == "win":
-            print("Good job mate! You guessed the whole word!")
-            break
+            if result == "wrong input":
+                print("Invalid input! Use letters only.")
+            elif result == "already":
+                print(f"You already guessed '{guess}'!")
+            elif result == "correct":
+                print("Good guess!")
+            elif result == "incorrect":
+                print("Wrong!")
+            elif result == "win":
+                print("Good job mate! You guessed the whole word!")
+                break
 
-        print("Current progress:", "".join(display))
-        print(f"Lives left: {lives}")
-        print(f"Guessed so far: {', '.join(guessed_letters)}")
+            print("Current progress:", "".join(display))
+            print(f"Lives left: {lives}")
+            print(f"Guessed so far: {', '.join(guessed_letters)}")
 
-    # WIN or LOSE state
-    if display == secret_word_chars:
-        print("\nCongratulations! You won!")
-    else:
-        print(f"\nGame Over. The word was: {secret_word}")
+        # WIN or LOSE state
+        if display == secret_word_chars:
+            print("\nCongratulations! You won!")
+        else:
+            print(f"\nGame Over. The word was: {secret_word}")
+    elif auto == "ok":
+        wordl = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+        while lives > 0 and display != secret_word_chars:
+            guess = random.choice(wordl)
+            norep = guess
+            wordl.remove(norep)
+
+            lives, guessed_letters, display, result = update_game_state(secret_word_chars, guessed_letters, guess, lives, display)
+            
+            time.sleep(3)
+            if result == "wrong input":
+                print("Invalid input! Use letters only.")
+            elif result == "already":
+                print(f"You already guessed '{guess}'!")
+            elif result == "correct":
+                print("Good guess!")
+            elif result == "incorrect":
+                print("Wrong!")
+            elif result == "win":
+                print("Good job mate! You guessed the whole word!")
+                break
+
+            print("Current progress:", "".join(display))
+            print(f"Lives left: {lives}")
+            print(f"Guessed so far: {', '.join(guessed_letters)}")
+
+        # WIN or LOSE state
+        if display == secret_word_chars:
+            print("\nCongratulations! You won!")
+        else:
+            print(f"\nGame Over. The word was: {secret_word}")
+
 
 def main() -> None:
     """Main loop: PLAY_AGAIN state."""
